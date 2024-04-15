@@ -6,4 +6,7 @@ Long URLs can be difficult to manage, especially when Excel cells have character
 
 ![Image](https://github.com/Alexanderh1988/Permanent-Link-Shortener/blob/main/sample.png?raw=true)
 
- 
+ HSTECH DEVS
+
+ hstech.cl
+ Alex hs
