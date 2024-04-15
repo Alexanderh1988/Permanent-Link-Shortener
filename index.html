@@ -1,0 +1,237 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Acortador de URL</title>
+<style>
+    body {
+ 
+            background-image: url('https://img.freepik.com/free-photo/aged-concrete-wall_1298-513.jpg?1');
+            background-size: cover; /* Adjust the background size as needed */
+            background-position: center; /* Adjust the background position as needed */
+            /* Optionally, you can set additional background properties */
+            /* background-repeat: no-repeat; */
+            /* background-attachment: fixed; */
+          font-family: Arial, sans-serif;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+    }
+	    .content {
+            padding: 20px;
+            border-radius: 10px;
+            background-color: rgba(255, 255, 255, 0.5); /* Background color with transparency */
+        }
+    
+    .button-container {
+        width: 60%;
+        text-align: vertical-align;
+		
+    }
+    
+    .button {
+        padding: 10px 20px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+    
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 1;
+        left: 5;
+        top: 5;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+		padding: 5;
+        background-color: rgba(0,0,0,0.4);
+    }
+    
+    .modal-content {
+        background-color: #fefefe;
+        margin: 15% auto;
+        padding: 20px;
+        border: 1px solid #888;
+        border-radius: 5px;
+        width: 80%;
+    }
+    
+    .close {
+        color: #aaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+    }
+    
+    .close:hover,
+    .close:focus {
+        color: black;
+        text-decoration: none;
+        cursor: pointer;
+    } 
+	
+	#textInput {
+	height: 20px;
+    width: 800px;
+    margin-bottom: 10px; /* Add some space below the input field */
+}
+
+</style>
+</head>
+<body>
+ 
+
+<div class="button-container">
+    <input  style="width:800px" type="text" id="textInput" placeholder="Enter text"><br>
+    <button id="button" class="button" onclick="openModal()">Acortar URL</button>
+</div>
+
+<div id="myModal" class="modal">
+  <div class="modal-content">
+    <span class="close" onclick="closeModal()">&times;</span>
+    <p id="modalMessage"></p>
+  </div>
+</div>
+
+<script>
+    // Get the modal
+    var modal = document.getElementById("myModal");
+
+    // Get the button that opens the modal
+    var btn = document.getElementsByClassName("button")[0];
+
+    // Get the input field
+    var inputField = document.getElementById("textInput");
+
+    // Get the message to be displayed in the modal
+    var modalMessage = document.getElementById("modalMessage");
+	
+	var resultText;
+
+    // When the user clicks the button, open the modal 
+    function openModal() {	
+	
+      //  modalMessage.innerText = "You entered: " + inputField.value; // Set the message in the modal
+	// modalMessage.innerText ="hstech.cl/rd/index.index.html?id=2";
+
+     modal.style.display = "block";
+	 
+	 //const textArea = document.getElementById('textInput');
+	 
+	 var inputTextValue = document.getElementById('textInput').value;
+	 
+var ID = generateUUID(); 
+
+// Save the text to the database
+saveTextToDatabase(inputTextValue, ID); 
+
+// Get the current URL
+var currentURL = getCurrentURL();
+
+// Construct the URL direction including the generated ID
+var urlDirection = currentURL + "rd.php?ID=" + ID;
+
+// Set the inner HTML of modalMessage to be an anchor tag with the URL direction as the href attribute and text
+modalMessage.innerHTML = '<a href="' + urlDirection + '">' + urlDirection + '</a>';
+
+      }
+
+    // When the user clicks on <span> (x), close the modal
+function getCurrentURL() {
+    return window.location.href;
+}
+	
+    function closeModal() {
+	
+        modal.style.display = "none";
+    }
+ 	   
+	   // Add click event listener
+		btn.addEventListener("click", function() { 
+		//alert("Button clicked!");
+		// Your code to execute when the button is clicked
+	      if (event.target == modal) {
+            modal.style.display = "none";
+        }
+	 		//saveTextToDatabase(inputField);
+			
+		// modalMessage.innerText ="hstech.cl/rd/index.html?id="+resultText;
+  		
+       });
+ 	
+	    // Function to save text to database via AJAX
+    function saveTextToDatabase(link, ID) {
+ 
+        const textArea = document.getElementById('textInput');
+
+        var xmlhttp = new XMLHttpRequest();
+
+    // Define a callback function to handle the response
+        xmlhttp.onreadystatechange = function() {
+        if (xmlhttp.readyState == XMLHttpRequest.DONE && xmlhttp.status == 200) {
+                // Request successful, handle response
+			console.log(xmlhttp.responseText);
+		 	document.getElementById('textInput').value = xmlhttp.responseText; 
+			resultText = xmlhttp.responseText;
+  			modal.style.display = "block";
+                       } 
+    };
+     var url = "saveLink.php";
+	 
+	 	 
+	  xmlhttp.open("GET", url + "?link=" + encodeURIComponent(link) + "&ID=" + encodeURIComponent(ID), true);
+
+
+    xmlhttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+
+   // Send the request with the data
+   xmlhttp.send();
+ 
+  }
+  
+function generateUUID() {
+  var chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+  var digits = '0123456789';
+  var uuid = '';
+  var charLength = chars.length;
+  var digitLength = digits.length;
+  var numDigits = 0; // Track the number of digits added
+  
+  for (var i = 0; i < 5; i++) {
+    if (i === 8 || i === 13 || i === 18 || i === 23) {
+      uuid += '-';
+    } else if (i === 14) {
+      uuid += '4';
+    } else if (i === 19) {
+      if (numDigits < 4) {
+        uuid += digits.charAt(Math.random() * digitLength | 0);
+        numDigits++;
+      } else {
+        uuid += chars.charAt(Math.random() * charLength | 0);
+      }
+    } else {
+      uuid += chars.charAt(Math.random() * charLength | 0);
+    }
+  }
+
+  return uuid;
+}
+
+
+// Example usage:
+//var uniqueID = generateUUID();
+//console.log(uniqueID);
+
+  
+</script>
+
+</body>
+</html>
