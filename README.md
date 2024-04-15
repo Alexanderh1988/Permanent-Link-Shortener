@@ -10,3 +10,5 @@ Long URLs can be difficult to manage, especially when Excel cells have character
 
  hstech.cl
  Alex hs
+
+![Image](https://hstech.cl/assets/img/logohstech.png?raw=true)
